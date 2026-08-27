@@ -1,0 +1,24 @@
+[Unit]
+Description=Vortex-Mesh Worker Agent (cluster node)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=vortex-agent
+WorkingDirectory=/opt/vortex-worker-agent
+EnvironmentFile=/opt/vortex-worker-agent/.env
+# .env de este nodo debe definir: NODE_ID, NODE_TOKEN, PANEL_URL, MAX_JOBS, AGENT_PORT
+ExecStart=/usr/bin/node /opt/vortex-worker-agent/agent.js
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+# El agente ejecuta comandos de jobs: no le des privilegios de más.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/vortex-worker-agent
+
+[Install]
+WantedBy=multi-user.target
