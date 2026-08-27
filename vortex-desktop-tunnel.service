@@ -1,0 +1,19 @@
+[Unit]
+Description=Vortex-Mesh Desktop Cloudflare Tunnel (noVNC)
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+# Ejecuta como usuario no-root dedicado, nunca como root
+User=vortex-tunnel
+ExecStart=/usr/local/bin/cloudflared tunnel run vortex-desktop
+Restart=on-failure
+RestartSec=5
+# Si el túnel muere 5 veces en 60s, detente en vez de flappear infinito
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
